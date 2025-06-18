@@ -19,10 +19,16 @@ const routes = [
 		name:'menu',
 		path:'/menu',
 		component:() => import('@/views/menu/index.vue'),
-		children:[{
+		children:[
+		{
 			name:'home',
 			path:'/home',
 			component:() => import('@/views/home/index.vue')
+		},
+		{
+			name:'set',
+			path:'/set',
+			component:() => import('@/views/set/index.vue')
 		}]
 	},
 ]

@@ -90,12 +90,12 @@
 	//打开验证邮箱和账号的弹窗
 	const openChangePassword = async () => {
 		const res = await verify(forgerData)
-		if(res.data.status == 0){
+		if(res.status == 0){
 			ElMessage({
 				message:'邮箱验证成功',
 				type:'success'
 			})
-			localStorage.setItem('id',res.data.id)
+			localStorage.setItem('id',res.id)
 			state.forgetPasswordDialog = false
 			state.changePasswordDialog = true
 		}else{

@@ -74,6 +74,9 @@
 	import { login, register } from '@/api/login'
 	import { ElMessage } from 'element-plus'
 	import { useRouter } from 'vue-router';
+	import { useUserInfo } from '@/store/userinfo';
+	
+	const store = useUserInfo()
 	
 	//默认显示登录功能
 	const activeName = ref('first')
@@ -98,14 +101,18 @@
 	//登录
 	const Login = async() => {
 		const res = await login(loginData)
-		console.log(res.data)
-		const { token } = res.data
-		if(res.data.message == "登录成功"){
+		console.log(res)
+		const { id } = res.result
+		console.log('id是：',id)
+		const { token } = res
+		if(res.message == "登录成功"){
 			ElMessage({
 				message:'登录成功',
 				type:'success'
 			})
+			localStorage.setItem('id',id)
 			localStorage.setItem('token',token)
+			store.userInfo(id)
 			//如果登录成功，跳转到首页
 			router.push('./home')
 		}else{
@@ -117,7 +124,7 @@
 	const Register = async () => {
 		if( registerData.password == register.repassword ){
 			const res = await register(registerData)
-			console.log(res.data)
+			console.log(res)
 			if(res.message == "注册账号成功"){
 				ElMessage({
 					message: '注册成功',

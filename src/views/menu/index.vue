@@ -62,7 +62,7 @@
 						<el-icon><icon-menu /></el-icon>
 						<span>登录日志</span>
 					</el-menu-item>
-					<el-menu-item index="9">
+					<el-menu-item index="set">
 						<el-icon><Tools /></el-icon>
 						<span>系统设置</span>
 					</el-menu-item>
@@ -70,10 +70,10 @@
 			</el-aside>
 			<el-container>
 				<el-header>
-					<span class="header-left-content">欢迎进入此后台管理系统</span>
+					<span class="header-left-content">{{userStore.name}}，欢迎进入此后台管理系统</span>
 					<div class="header-right-content">
 						<el-icon :size=24><Message /></el-icon>
-						<el-avatar :size=24 :src="circleUrl" />
+							<el-avatar :size=24 :src="userStore.imageUrl" />
 						<el-dropdown>
 						    <span class="el-dropdown-link">
 						      设置
@@ -100,14 +100,10 @@
 	import { ref, reactive, toRefs } from 'vue';
 	import { Menu as IconMenu } from '@element-plus/icons-vue'
 	import { useRouter } from 'vue-router';
+	import { useUserInfo } from '@/store/userinfo';
+	const userStore = useUserInfo()
 	
 	const router = useRouter()
-	
-	const state = reactive({
-		circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
-	})
-	
-	const { circleUrl } = toRefs(state)
 	
 	const Logout = () => {
 		router.push('./login')
@@ -163,6 +159,11 @@
 			align-items: center;
 			width: 160px;
 		}
+	}
+	
+	.el-main{
+		--el-main-padding:0px;
+		background-color: #f3f4fa;
 	}
 	
 	.el-menu-item:hover{
