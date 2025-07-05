@@ -24,7 +24,7 @@
 					<div class="account-infor-wrapped">
 						<span>用户账号：</span>
 						<div class="account-infor-content">
-							<el-input v-model="userStore.account" disabled></el-input>
+							<el-input v-model="userData.account" disabled></el-input>
 						</div>
 					</div>
 					<div class="account-infor-wrapped">
@@ -36,7 +36,7 @@
 					<div class="account-infor-wrapped">
 						<span>用户姓名：</span>
 						<div class="account-infor-content">
-							<el-input v-model="userStore.name"></el-input>							
+							<el-input v-model="userData.name"></el-input>							
 						</div>
 						<div class="account-save-button">
 							<el-button type="primary" @click="changeUserName">保存</el-button>							
@@ -45,7 +45,7 @@
 					<div class="account-infor-wrapped">
 						<span>用户性别：</span>
 						<div class="account-infor-content">
-							<el-select v-model="userStore.sex" placeholder="请选择" style="width: 240px;">
+							<el-select v-model="userData.sex" placeholder="请选择" style="width: 240px;">
 								<el-option label="男" value="man" />
 								<el-option label="女" value="women" />
 							</el-select>							
@@ -57,19 +57,19 @@
 					<div class="account-infor-wrapped">
 						<span>用户身份：</span>
 						<div class="account-infor-content">
-							<el-input v-model="userStore.identity" disabled></el-input>
+							<el-input v-model="userData.identity" disabled></el-input>
 						</div>
 					</div>
 					<div class="account-infor-wrapped">
 						<span>用户部门：</span>
 						<div class="account-infor-content">
-							<el-input v-model="userStore.department" disabled></el-input>
+							<el-input v-model="userData.department" disabled></el-input>
 						</div>
 					</div>
 					<div class="account-infor-wrapped">
 						<span>用户邮箱：</span>
 						<div class="account-infor-content">
-							<el-input v-model="userStore.email"></el-input>							
+							<el-input v-model="userData.email"></el-input>							
 						</div>
 						<div class="account-save-button">
 							<el-button type="primary" @click="changeUserEmail">保存</el-button>							
@@ -145,7 +145,7 @@
 </template>
 
 <script lang="ts" setup>
-	import { ref } from 'vue';
+	import { onMounted, ref, reactive } from 'vue';
 	import { ElMessage } from 'element-plus'
 	import { Plus } from '@element-plus/icons-vue'
 	import type { UploadProps } from 'element-plus'
@@ -153,12 +153,23 @@
 	import { useUserInfo } from '@/store/userinfo';
 	import breadCrumb from '@/components/breadCrumb.vue'
 	import changePassword from './components/change-password.vue'	
-	import { changeName,changeSex,changeEmail } from '@/api/userinfo.js'
+	import { changeName,changeSex,changeEmail,getUserInfo } from '@/api/userinfo.js'
 	import editor from './components/editor.vue';
 	import { bus } from "@/utils/mitt.js"
 	import { getCompanyName,changeCompanyName,getAllSwiper } from '@/api/setting.js';
 	
 	const userStore = useUserInfo()
+	
+	onMounted(async	() => {
+		let id = localStorage.getItem('id')
+		const res = await getUserInfo(id)
+		userData.account = res.account
+		userData.name = res.name
+		userData.sex = res.sex
+		userData.identity = res.identity
+		userData.department = res.department
+		userData.email = res.email
+	})
 	const changeP = ref()
 	const editorP = ref()
 	//面包屑
@@ -169,6 +180,24 @@
 	})
 	
 	const activeName = ref('first')
+	
+	interface userData {
+		account:number,
+		name:string,
+		sex:string,
+		identity:string,
+		department:string,
+		email:string
+	}
+	
+	const userData : userData = reactive({
+		account: null,
+		name:'',
+		sex:'',
+		identity:'',
+		department:'',
+		email:''
+	})
 	
 	//用户头像部分	
 	//头像上传成功的回调函数
@@ -213,7 +242,7 @@
 	
 	//修改用户姓名
 	const changeUserName = async () => {
-		const res = await changeName(userStore.name, localStorage.getItem('id'))
+		const res = await changeName(userData.name, localStorage.getItem('id'))
 		if(res.status == 0){
 			ElMessage({
 				message:'用户姓名修改成功',
@@ -226,7 +255,7 @@
 	
 	//修改用户性别
 	const changeUserSex = async () => {
-		const res = await changeSex(userStore.sex, localStorage.getItem('id'))
+		const res = await changeSex(userData.sex, localStorage.getItem('id'))
 		if(res.status == 0){
 			ElMessage({
 				message:'用户性别修改成功',
@@ -239,7 +268,7 @@
 	
 	//修改用户邮箱
 	const changeUserEmail = async () => {
-		const res = await changeEmail(userStore.email, localStorage.getItem('id'))
+		const res = await changeEmail(userData.email, localStorage.getItem('id'))
 		if(res.status == 0){
 			ElMessage({
 				message:'用户邮箱修改成功',
